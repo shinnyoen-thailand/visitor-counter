@@ -1,196 +1,290 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Visitor Counter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>来場者カウンター</title>
   <style>
+    /* iOS特有のタップ時のハイライトを無効化 */
     * {
-      box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
     }
+    
     body {
       margin: 0;
-      padding: 20px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #f4f6f8;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      height: 100vh;
+      width: 100vw;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      justify-content: space-between;
-      min-height: 100vh;
+      background-color: #f0f0f0; /* フォールバック */
+      
+      /* ★背景画像の設定 */
+      background-image: url('象さん.jpg'); /* 同じフォルダに象さん.jpgがある前提 */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      
+      /* 文字が選択されないようにする（誤動作防止） */
       user-select: none;
+      -webkit-user-select: none;
+      overflow: hidden;
     }
-    h1 {
-      margin: 10px 0 20px;
-      color: #333;
-      font-size: 28px;
-    }
-    .container {
-      display: flex;
-      gap: 20px;
-      width: 100%;
-      max-width: 900px;
-      flex: 1;
-    }
-    .card {
-      flex: 1;
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+
+    /* 全体のコンテナ */
+    .app-container {
+      width: 90%;
+      height: 90%;
+      max-width: 1024px; /* iPad Proなどの大画面用 */
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: space-between;
+      position: relative;
     }
-    .title {
-      font-size: 32px;
+
+    /* メインのカウンターエリア（2列並び） */
+    .counters {
+      display: flex;
+      flex: 1;
+      gap: 3%; /* 左右のカードの間隔 */
+      margin-bottom: 20px;
+    }
+
+    /* 各カウンターのカード */
+    .counter-card {
+      flex: 1;
+      /* ★半透明の背景（後ろの絵が見えるように） */
+      background-color: rgba(255, 255, 255, 0.5); /* 白色、不透明度50% */
+      border-radius: 20px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      /* すりガラス効果を入れるとより綺麗です（iOS Safari対応） */
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+
+    /* カテゴリ名（Member, Visitor） */
+    .label {
+      font-size: 2.5rem;
       font-weight: bold;
-      color: #444;
+      color: #333;
+      margin-bottom: 10px;
     }
+
+    /* カウント数字 */
     .count {
-      font-size: 80px;
-      font-weight: bold;
-      color: #111;
-      margin: 20px 0;
+      font-size: 8rem;
+      font-weight: 800;
+      color: #000;
+      line-height: 1;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
+
+    /* 大きなカウントアップボタン */
     .btn-add {
       width: 100%;
-      height: 140px;
-      font-size: 36px;
+      height: 25%; /* カードの高さに対して */
+      border: none;
+      border-radius: 15px;
+      font-size: 2.5rem;
       font-weight: bold;
       color: white;
-      border: none;
-      border-radius: 12px;
       cursor: pointer;
-      transition: transform 0.1s, opacity 0.1s;
+      transition: transform 0.05s, opacity 0.1s;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
     }
+    
+    /* タップ時の視覚効果 */
     .btn-add:active {
-      transform: scale(0.98);
+      transform: scale(0.97);
       opacity: 0.9;
     }
-    .member-btn { background-color: #2563eb; }
-    .visitor-btn { background-color: #059669; }
-    
+
+    /* 各ボタンの色 */
+    .btn-member {
+      background-color: #3B82F6; /* 青色 */
+    }
+    .btn-visitor {
+      background-color: #10B981; /* 緑色 */
+    }
+
+    /* 小さなマイナスボタン */
     .btn-sub {
-      width: 60px;
-      height: 40px;
       margin-top: 15px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #666;
-      background-color: #e5e7eb;
+      padding: 10px 20px;
+      background-color: #e0e0e0;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
+      color: #666;
+      font-size: 1rem;
       cursor: pointer;
     }
     .btn-sub:active {
-      background-color: #d1d5db;
+      background-color: #d0d0d0;
     }
+
+    /* 下部のリセットボタンエリア */
     .footer {
-      margin-top: 30px;
-      margin-bottom: 10px;
-      width: 100%;
-      max-width: 900px;
       display: flex;
       justify-content: center;
+      padding-bottom: 10px;
     }
+
+    /* リセットボタン（長押し） */
     .btn-reset {
-      padding: 12px 30px;
-      font-size: 16px;
-      font-weight: bold;
-      color: #dc2626;
-      background-color: #fee2e2;
-      border: 2px solid #fca5a5;
+      padding: 15px 40px;
+      background-color: rgba(254, 226, 226, 0.8); /* 半透明の赤 */
+      border: 1px solid rgba(248, 113, 113, 0.5);
       border-radius: 30px;
+      color: #b91c1c; /* 濃い赤 */
+      font-size: 1.2rem;
+      font-weight: bold;
       cursor: pointer;
-      touch-action: manipulation;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      
+      /* iPhone/iPadでタップ時に変な動作をしないようにする */
+      -webkit-touch-callout: none;
+      touch-action: none;
     }
     .btn-reset:active {
-      background-color: #fca5a5;
+      background-color: rgba(252, 165, 165, 0.9);
     }
   </style>
 </head>
 <body>
 
-  <h1>Visitor Counter</h1>
-
-  <div class="container">
-    <!-- Member Section -->
-    <div class="card">
-      <div class="title">Member</div>
-      <div class="count" id="memberCount">0</div>
-      <button class="btn-add member-btn" onclick="addCount('member')">+ Member</button>
-      <button class="btn-sub" onclick="subCount('member')">-</button>
+  <div class="app-container">
+    
+    <!-- カウンターエリア -->
+    <div class="counters">
+      
+      <!-- Memberのカード -->
+      <div class="counter-card">
+        <div class="label">Member</div>
+        <div class="count" id="count-member">0</div>
+        <!-- ★「＋」を削除した大きなボタン -->
+        <button class="btn-add btn-member" id="add-member">Member</button>
+        <!-- 小さなマイナスボタン -->
+        <button class="btn-sub" id="sub-member">－</button>
+      </div>
+      
+      <!-- Visitorのカード -->
+      <div class="counter-card">
+        <div class="label">Visitor</div>
+        <div class="count" id="count-visitor">0</div>
+        <!-- ★「＋」を削除した大きなボタン -->
+        <button class="btn-add btn-visitor" id="add-visitor">Visitor</button>
+        <!-- 小さなマイナスボタン -->
+        <button class="btn-sub" id="sub-visitor">－</button>
+      </div>
+      
     </div>
-
-    <!-- Visitor Section -->
-    <div class="card">
-      <div class="title">Visitor</div>
-      <div class="count" id="visitorCount">0</div>
-      <button class="btn-add visitor-btn" onclick="addCount('visitor')">+ Visitor</button>
-      <button class="btn-sub" onclick="subCount('visitor')">-</button>
+    
+    <!-- 下部エリア -->
+    <div class="footer">
+      <button class="btn-reset" id="btn-reset">Hold to Reset</button>
     </div>
-  </div>
-
-  <div class="footer">
-    <button class="btn-reset" id="resetBtn">Hold to Reset</button>
+    
   </div>
 
   <script>
-    let counts = {
-      member: 0,
-      visitor: 0
-    };
+    // 状態管理（カウント数）
+    let memberCount = 0;
+    let visitorCount = 0;
 
+    // 画面要素の取得
+    const elMemberCount = document.getElementById('count-member');
+    const elVisitorCount = document.getElementById('count-visitor');
+    const elResetBtn = document.getElementById('btn-reset');
+
+    // 画面表示を更新する関数
     function updateDisplay() {
-      document.getElementById('memberCount').innerText = counts.member;
-      document.getElementById('visitorCount').innerText = counts.visitor;
+      elMemberCount.innerText = memberCount;
+      elVisitorCount.innerText = visitorCount;
     }
 
-    function addCount(type) {
-      counts[type]++;
+    // --- カウント処理 ---
+
+    // Member +
+    document.getElementById('add-member').addEventListener('touchstart', (e) => {
+      e.preventDefault(); // 連打時のダブルタップズーム防止
+      memberCount++;
       updateDisplay();
-    }
+    });
 
-    function subCount(type) {
-      if (counts[type] > 0) {
-        counts[type]--;
+    // Member - (誤カウント修正用)
+    document.getElementById('sub-member').addEventListener('click', () => {
+      if (memberCount > 0) {
+        memberCount--;
         updateDisplay();
       }
-    }
-
-    // Long press logic for Reset button
-    const resetBtn = document.getElementById('resetBtn');
-    let timer = null;
-
-    function startPress() {
-      timer = setTimeout(() => {
-        if (confirm("Are you sure you want to reset all counts?")) {
-          counts.member = 0;
-          counts.visitor = 0;
-          updateDisplay();
-        }
-      }, 1500); // 1.5 seconds hold
-    }
-
-    function cancelPress() {
-      if (timer) {
-        clearTimeout(timer);
-        timer = null;
-      }
-    }
-
-    resetBtn.addEventListener('mousedown', startPress);
-    resetBtn.addEventListener('mouseup', cancelPress);
-    resetBtn.addEventListener('mouseleave', cancelPress);
-
-    resetBtn.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      startPress();
     });
-    resetBtn.addEventListener('touchend', cancelPress);
+
+    // Visitor +
+    document.getElementById('add-visitor').addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      visitorCount++;
+      updateDisplay();
+    });
+
+    // Visitor - (誤カウント修正用)
+    document.getElementById('sub-visitor').addEventListener('click', () => {
+      if (visitorCount > 0) {
+        visitorCount--;
+        updateDisplay();
+      }
+    });
+
+    // --- リセット処理（長押し） ---
+    
+    let resetTimer = null;
+    const holdTime = 1500; // 1.5秒長押し
+
+    // 長押し開始
+    function startReset(e) {
+      if (e.type === 'touchstart') e.preventDefault();
+      elResetBtn.innerText = 'Hold...';
+      elResetBtn.style.backgroundColor = 'rgba(252, 165, 165, 1)'; // 色を濃くする
+      
+      resetTimer = setTimeout(() => {
+        // カウントをリセット
+        memberCount = 0;
+        visitorCount = 0;
+        updateDisplay();
+        alert('カウントをリセットしました');
+        resetEnd(); // 終了処理
+      }, holdTime);
+    }
+
+    // 長押し中断・終了
+    function resetEnd() {
+      if (resetTimer) {
+        clearTimeout(resetTimer);
+        resetTimer = null;
+      }
+      elResetBtn.innerText = 'Hold to Reset';
+      elResetBtn.style.backgroundColor = ''; // 元の色に戻す
+    }
+
+    // マウスとタッチ両方に対応
+    elResetBtn.addEventListener('mousedown', startReset);
+    elResetBtn.addEventListener('mouseup', resetEnd);
+    elResetBtn.addEventListener('mouseleave', resetEnd);
+
+    elResetBtn.addEventListener('touchstart', startReset, { passive: false });
+    elResetBtn.addEventListener('touchend', resetEnd);
+    elResetBtn.addEventListener('touchcancel', resetEnd);
+
   </script>
 </body>
 </html>
