@@ -43,7 +43,7 @@
       position: relative;
     }
 
-    /* Counters Layout: Keep wide center gap for the 4 people */
+    /* Counters Layout */
     .counters {
       display: flex;
       flex: 1;
@@ -52,39 +52,65 @@
       margin-bottom: 10px;
     }
 
-    /* Counter Cards (Larger Width & Height) */
+    /* Counter Outer Container (Completely Transparent) */
     .counter-card {
       width: 38%;
       height: 92%;
-      background-color: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      border-radius: 28px;
-      padding: 24px;
+      background-color: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 10px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-      -webkit-backdrop-filter: blur(3px);
-      backdrop-filter: blur(3px);
     }
 
-    /* Count Number (Significantly Larger) */
-    .count {
-      font-size: clamp(10rem, 22vh, 18rem);
-      font-weight: 800;
-      color: #000000;
-      line-height: 1;
+    /* Number Area Wrapper */
+    .count-wrapper {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
+      width: 100%;
     }
 
-    /* Member & Visitor Buttons (Larger Box & Text) */
+    /* Count Number (Rounded Capsule Blur Badge) */
+    .count {
+      font-size: clamp(8rem, 20vh, 16rem);
+      font-weight: 800;
+      color: #000000;
+      line-height: 1;
+      padding: 15px 45px;
+      background-color: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 60px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      min-width: 220px;
+      text-align: center;
+    }
+
+    /* Button Area (Targeted Blur around Member/Visitor buttons) */
+    .btn-area {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      padding: 16px;
+      border-radius: 24px;
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+    }
+
+    /* Member & Visitor Buttons */
     .btn-add {
       width: 100%;
-      height: 110px;
+      height: 100px;
       border: none;
       border-radius: 18px;
       font-size: 3rem;
@@ -109,9 +135,9 @@
 
     /* Minus Buttons */
     .btn-sub {
-      margin-top: 15px;
+      margin-top: 12px;
       padding: 10px 28px;
-      background-color: rgba(229, 231, 235, 0.85);
+      background-color: rgba(229, 231, 235, 0.9);
       border: none;
       border-radius: 10px;
       color: #374151;
@@ -157,16 +183,24 @@
       
       <!-- Member Section -->
       <div class="counter-card">
-        <div class="count" id="count-member">0</div>
-        <button class="btn-add btn-member" id="add-member">Member</button>
-        <button class="btn-sub" id="sub-member">－</button>
+        <div class="count-wrapper">
+          <div class="count" id="count-member">0</div>
+        </div>
+        <div class="btn-area">
+          <button class="btn-add btn-member" id="add-member">Member</button>
+          <button class="btn-sub" id="sub-member">－</button>
+        </div>
       </div>
       
       <!-- Visitor Section -->
       <div class="counter-card">
-        <div class="count" id="count-visitor">0</div>
-        <button class="btn-add btn-visitor" id="add-visitor">Visitor</button>
-        <button class="btn-sub" id="sub-visitor">－</button>
+        <div class="count-wrapper">
+          <div class="count" id="count-visitor">0</div>
+        </div>
+        <div class="btn-area">
+          <button class="btn-add btn-visitor" id="add-visitor">Visitor</button>
+          <button class="btn-sub" id="sub-visitor">－</button>
+        </div>
       </div>
       
     </div>
