@@ -1,27 +1,196 @@
-Visitor Counter
-  
-
-
-
-  Visitor Counter
-
-  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Visitor Counter</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f4f6f8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 100vh;
+      user-select: none;
+    }
+    h1 {
+      margin: 10px 0 20px;
+      color: #333;
+      font-size: 28px;
+    }
+    .container {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+      max-width: 900px;
+      flex: 1;
+    }
+    .card {
+      flex: 1;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .title {
+      font-size: 32px;
+      font-weight: bold;
+      color: #444;
+    }
+    .count {
+      font-size: 80px;
+      font-weight: bold;
+      color: #111;
+      margin: 20px 0;
+    }
+    .btn-add {
+      width: 100%;
+      height: 140px;
+      font-size: 36px;
+      font-weight: bold;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.1s;
+    }
+    .btn-add:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+    .member-btn { background-color: #2563eb; }
+    .visitor-btn { background-color: #059669; }
     
-    
-      Member
-      0
-      + Member
-      -
-    
+    .btn-sub {
+      width: 60px;
+      height: 40px;
+      margin-top: 15px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #666;
+      background-color: #e5e7eb;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .btn-sub:active {
+      background-color: #d1d5db;
+    }
+    .footer {
+      margin-top: 30px;
+      margin-bottom: 10px;
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      justify-content: center;
+    }
+    .btn-reset {
+      padding: 12px 30px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #dc2626;
+      background-color: #fee2e2;
+      border: 2px solid #fca5a5;
+      border-radius: 30px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .btn-reset:active {
+      background-color: #fca5a5;
+    }
+  </style>
+</head>
+<body>
 
-    
-    
-      Visitor
-      0
-      + Visitor
-      -
-    
-  
+  <h1>Visitor Counter</h1>
 
-  
-    Hold to Reset
+  <div class="container">
+    <!-- Member Section -->
+    <div class="card">
+      <div class="title">Member</div>
+      <div class="count" id="memberCount">0</div>
+      <button class="btn-add member-btn" onclick="addCount('member')">+ Member</button>
+      <button class="btn-sub" onclick="subCount('member')">-</button>
+    </div>
+
+    <!-- Visitor Section -->
+    <div class="card">
+      <div class="title">Visitor</div>
+      <div class="count" id="visitorCount">0</div>
+      <button class="btn-add visitor-btn" onclick="addCount('visitor')">+ Visitor</button>
+      <button class="btn-sub" onclick="subCount('visitor')">-</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button class="btn-reset" id="resetBtn">Hold to Reset</button>
+  </div>
+
+  <script>
+    let counts = {
+      member: 0,
+      visitor: 0
+    };
+
+    function updateDisplay() {
+      document.getElementById('memberCount').innerText = counts.member;
+      document.getElementById('visitorCount').innerText = counts.visitor;
+    }
+
+    function addCount(type) {
+      counts[type]++;
+      updateDisplay();
+    }
+
+    function subCount(type) {
+      if (counts[type] > 0) {
+        counts[type]--;
+        updateDisplay();
+      }
+    }
+
+    // Long press logic for Reset button
+    const resetBtn = document.getElementById('resetBtn');
+    let timer = null;
+
+    function startPress() {
+      timer = setTimeout(() => {
+        if (confirm("Are you sure you want to reset all counts?")) {
+          counts.member = 0;
+          counts.visitor = 0;
+          updateDisplay();
+        }
+      }, 1500); // 1.5 seconds hold
+    }
+
+    function cancelPress() {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    }
+
+    resetBtn.addEventListener('mousedown', startPress);
+    resetBtn.addEventListener('mouseup', cancelPress);
+    resetBtn.addEventListener('mouseleave', cancelPress);
+
+    resetBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      startPress();
+    });
+    resetBtn.addEventListener('touchend', cancelPress);
+  </script>
+</body>
+</html>
