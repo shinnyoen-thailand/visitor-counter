@@ -56,44 +56,36 @@
     /* 各カウンターのカード */
     .counter-card {
       flex: 1;
-      /* ★半透明の背景：透明度をさらに上げて（0.3） */
-      background-color: rgba(255, 255, 255, 0.3); /* 白色、不透明度30% */
+      /* ★半透明の背景：透明度を大幅に上げる（0.15） */
+      background-color: rgba(255, 255, 255, 0.15); /* 白色、不透明度15% */
       border-radius: 20px;
       padding: 20px; /* ★パディングを縮小 */
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center; /* ★中央揃え */
       align-items: center;
       box-shadow: 0 10px 20px rgba(0,0,0,0.1);
       /* すりガラス効果 */
-      -webkit-backdrop-filter: blur(8px); /* ★ぼかしを少し弱く */
-      backdrop-filter: blur(8px);
-    }
-
-    /* カテゴリ名（Member, Visitor） */
-    .label {
-      font-size: 2rem; /* ★フォントサイズを縮小 */
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 5px;
+      -webkit-backdrop-filter: blur(5px); /* ★ぼかしをさらに弱く */
+      backdrop-filter: blur(5px);
     }
 
     /* カウント数字 */
     .count {
-      font-size: 6rem; /* ★フォントサイズを縮小 */
+      font-size: 15rem; /* ★フォントサイズを大幅に大きく */
       font-weight: 800;
       color: #000;
       line-height: 1;
-      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
+      margin-bottom: 20px; /* ★ボタンとの間隔 */
     }
 
     /* 大きなカウントアップボタン */
     .btn-add {
       width: 100%;
-      height: 20%; /* ★高さを縮小 */
+      height: 25%; /* ★高さを調整 */
       border: none;
       border-radius: 15px;
       font-size: 2rem; /* ★フォントサイズを縮小 */
@@ -122,7 +114,7 @@
     .btn-sub {
       margin-top: 10px;
       padding: 8px 16px;
-      background-color: #e0e0e0;
+      background-color: rgba(224, 224, 224, 0.8); /* ★半透明 */
       border: none;
       border-radius: 8px;
       color: #666;
@@ -130,7 +122,7 @@
       cursor: pointer;
     }
     .btn-sub:active {
-      background-color: #d0d0d0;
+      background-color: rgba(208, 208, 208, 0.9);
     }
 
     /* 下部のリセットボタンエリア */
@@ -169,7 +161,7 @@
       
       <!-- Memberのカード -->
       <div class="counter-card">
-        <div class="label">Member</div>
+        <!-- ★上部のラベルを削除 -->
         <div class="count" id="count-member">0</div>
         <!-- 「＋」を削除した大きなボタン -->
         <button class="btn-add btn-member" id="add-member">Member</button>
@@ -179,7 +171,7 @@
       
       <!-- Visitorのカード -->
       <div class="counter-card">
-        <div class="label">Visitor</div>
+        <!-- ★上部のラベルを削除 -->
         <div class="count" id="count-visitor">0</div>
         <!-- 「＋」を削除した大きなボタン -->
         <button class="btn-add btn-visitor" id="add-visitor">Visitor</button>
