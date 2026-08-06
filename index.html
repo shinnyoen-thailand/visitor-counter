@@ -22,10 +22,10 @@
       align-items: center;
       background-color: #f0f0f0; /* フォールバック */
       
-      /* ★背景画像の設定 */
+      /* ★背景画像の設定：切れずに全体が見えるように */
       background-image: url('象さん.jpg'); /* 同じフォルダに象さん.jpgがある前提 */
-      background-size: cover;
-      background-position: center;
+      background-size: contain; /* ★画像を画面内に収める */
+      background-position: center bottom; /* ★イラストの主要な部分を中央下に配置 */
       background-repeat: no-repeat;
       
       /* 文字が選択されないようにする（誤動作防止） */
@@ -36,9 +36,9 @@
 
     /* 全体のコンテナ */
     .app-container {
-      width: 90%;
-      height: 90%;
-      max-width: 1024px; /* iPad Proなどの大画面用 */
+      width: 80%; /* ★幅を縮小 */
+      height: 70%; /* ★高さを縮小 */
+      max-width: 1024px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -49,38 +49,38 @@
     .counters {
       display: flex;
       flex: 1;
-      gap: 3%; /* 左右のカードの間隔 */
+      gap: 10%; /* ★カードの間隔を広げる */
       margin-bottom: 20px;
     }
 
     /* 各カウンターのカード */
     .counter-card {
       flex: 1;
-      /* ★半透明の背景（後ろの絵が見えるように） */
-      background-color: rgba(255, 255, 255, 0.5); /* 白色、不透明度50% */
+      /* ★半透明の背景：透明度をさらに上げて（0.3） */
+      background-color: rgba(255, 255, 255, 0.3); /* 白色、不透明度30% */
       border-radius: 20px;
-      padding: 30px;
+      padding: 20px; /* ★パディングを縮小 */
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-      /* すりガラス効果を入れるとより綺麗です（iOS Safari対応） */
-      -webkit-backdrop-filter: blur(10px);
-      backdrop-filter: blur(10px);
+      /* すりガラス効果 */
+      -webkit-backdrop-filter: blur(8px); /* ★ぼかしを少し弱く */
+      backdrop-filter: blur(8px);
     }
 
     /* カテゴリ名（Member, Visitor） */
     .label {
-      font-size: 2.5rem;
+      font-size: 2rem; /* ★フォントサイズを縮小 */
       font-weight: bold;
       color: #333;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
     }
 
     /* カウント数字 */
     .count {
-      font-size: 8rem;
+      font-size: 6rem; /* ★フォントサイズを縮小 */
       font-weight: 800;
       color: #000;
       line-height: 1;
@@ -93,10 +93,10 @@
     /* 大きなカウントアップボタン */
     .btn-add {
       width: 100%;
-      height: 25%; /* カードの高さに対して */
+      height: 20%; /* ★高さを縮小 */
       border: none;
       border-radius: 15px;
-      font-size: 2.5rem;
+      font-size: 2rem; /* ★フォントサイズを縮小 */
       font-weight: bold;
       color: white;
       cursor: pointer;
@@ -120,13 +120,13 @@
 
     /* 小さなマイナスボタン */
     .btn-sub {
-      margin-top: 15px;
-      padding: 10px 20px;
+      margin-top: 10px;
+      padding: 8px 16px;
       background-color: #e0e0e0;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       color: #666;
-      font-size: 1rem;
+      font-size: 0.9rem;
       cursor: pointer;
     }
     .btn-sub:active {
@@ -142,22 +142,21 @@
 
     /* リセットボタン（長押し） */
     .btn-reset {
-      padding: 15px 40px;
-      background-color: rgba(254, 226, 226, 0.8); /* 半透明の赤 */
-      border: 1px solid rgba(248, 113, 113, 0.5);
+      padding: 12px 30px;
+      background-color: rgba(254, 226, 226, 0.7); /* ★透明度をさらに上げる */
+      border: 1px solid rgba(248, 113, 113, 0.4);
       border-radius: 30px;
       color: #b91c1c; /* 濃い赤 */
-      font-size: 1.2rem;
+      font-size: 1rem;
       font-weight: bold;
       cursor: pointer;
       box-shadow: 0 4px 6px rgba(0,0,0,0.05);
       
-      /* iPhone/iPadでタップ時に変な動作をしないようにする */
       -webkit-touch-callout: none;
       touch-action: none;
     }
     .btn-reset:active {
-      background-color: rgba(252, 165, 165, 0.9);
+      background-color: rgba(252, 165, 165, 0.8);
     }
   </style>
 </head>
@@ -172,7 +171,7 @@
       <div class="counter-card">
         <div class="label">Member</div>
         <div class="count" id="count-member">0</div>
-        <!-- ★「＋」を削除した大きなボタン -->
+        <!-- 「＋」を削除した大きなボタン -->
         <button class="btn-add btn-member" id="add-member">Member</button>
         <!-- 小さなマイナスボタン -->
         <button class="btn-sub" id="sub-member">－</button>
@@ -182,7 +181,7 @@
       <div class="counter-card">
         <div class="label">Visitor</div>
         <div class="count" id="count-visitor">0</div>
-        <!-- ★「＋」を削除した大きなボタン -->
+        <!-- 「＋」を削除した大きなボタン -->
         <button class="btn-add btn-visitor" id="add-visitor">Visitor</button>
         <!-- 小さなマイナスボタン -->
         <button class="btn-sub" id="sub-visitor">－</button>
@@ -254,7 +253,7 @@
     function startReset(e) {
       if (e.type === 'touchstart') e.preventDefault();
       elResetBtn.innerText = 'Hold...';
-      elResetBtn.style.backgroundColor = 'rgba(252, 165, 165, 1)'; // 色を濃くする
+      elResetBtn.style.backgroundColor = 'rgba(252, 165, 165, 0.9)'; // 色を濃くする
       
       resetTimer = setTimeout(() => {
         // カウントをリセット
