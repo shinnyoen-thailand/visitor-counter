@@ -34,45 +34,44 @@
 
     /* Main Container */
     .app-container {
-      width: 92%;
-      height: 85%;
-      max-width: 1200px;
+      width: 96%;
+      height: 92%;
+      max-width: 1400px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
     }
 
-    /* Counters Layout: Push cards to extreme left and right */
+    /* Counters Layout: Keep wide center gap for the 4 people */
     .counters {
       display: flex;
       flex: 1;
-      justify-content: space-between; /* Leaves central area completely open */
+      justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
-    /* Counter Cards */
+    /* Counter Cards (Larger Width & Height) */
     .counter-card {
-      width: 32%;
-      max-width: 300px;
-      height: 85%;
-      background-color: rgba(255, 255, 255, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 24px;
-      padding: 20px;
+      width: 38%;
+      height: 92%;
+      background-color: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 28px;
+      padding: 24px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-      -webkit-backdrop-filter: blur(4px);
-      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(3px);
+      backdrop-filter: blur(3px);
     }
 
-    /* Count Number */
+    /* Count Number (Significantly Larger) */
     .count {
-      font-size: 10rem;
+      font-size: clamp(10rem, 22vh, 18rem);
       font-weight: 800;
       color: #000000;
       line-height: 1;
@@ -82,18 +81,18 @@
       justify-content: center;
     }
 
-    /* Main Count Buttons */
+    /* Member & Visitor Buttons (Larger Box & Text) */
     .btn-add {
       width: 100%;
-      height: 70px;
+      height: 110px;
       border: none;
-      border-radius: 14px;
-      font-size: 2rem;
+      border-radius: 18px;
+      font-size: 3rem;
       font-weight: bold;
       color: #ffffff;
       cursor: pointer;
       transition: transform 0.05s, opacity 0.1s;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.18);
     }
     
     .btn-add:active {
@@ -110,18 +109,18 @@
 
     /* Minus Buttons */
     .btn-sub {
-      margin-top: 12px;
-      padding: 8px 20px;
-      background-color: rgba(229, 231, 235, 0.8);
+      margin-top: 15px;
+      padding: 10px 28px;
+      background-color: rgba(229, 231, 235, 0.85);
       border: none;
-      border-radius: 8px;
-      color: #4b5563;
-      font-size: 1.1rem;
+      border-radius: 10px;
+      color: #374151;
+      font-size: 1.3rem;
       font-weight: bold;
       cursor: pointer;
     }
     .btn-sub:active {
-      background-color: rgba(209, 213, 219, 0.9);
+      background-color: rgba(209, 213, 219, 0.95);
     }
 
     /* Footer Area */
@@ -133,12 +132,12 @@
 
     /* Reset Button */
     .btn-reset {
-      padding: 12px 32px;
+      padding: 14px 40px;
       background-color: rgba(254, 226, 226, 0.85);
       border: 1px solid rgba(248, 113, 113, 0.5);
       border-radius: 30px;
       color: #dc2626;
-      font-size: 1rem;
+      font-size: 1.1rem;
       font-weight: bold;
       cursor: pointer;
       box-shadow: 0 4px 8px rgba(0,0,0,0.06);
@@ -198,7 +197,7 @@
       updateDisplay();
     });
     document.getElementById('add-member').addEventListener('click', (e) => {
-      if (e.detail !== 0) return; // Prevent double trigger on touch devices
+      if (e.detail !== 0) return;
       memberCount++;
       updateDisplay();
     });
