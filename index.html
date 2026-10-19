@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Visitor Counter</title>
 
-  <!-- アプリアイコンの設定（象さん.jpgをアイコンに指定） -->
+  <!-- アプリアイコンの設定 -->
   <link rel="apple-touch-icon" href="象さん.jpg">
   <link rel="icon" type="image/jpeg" href="象さん.jpg">
   
@@ -229,6 +229,31 @@
     const elVisitorCount = document.getElementById('count-visitor');
     const elResetBtn = document.getElementById('btn-reset');
 
+    // タイの小型シンバル「チン（ฉิ่ง）」風の澄んだ高音を鳴らす関数
+    function playChinSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscillator.type = 'sine'; // 澄んだ美しい正弦波
+        // チンのような高く響く周波数（約 1350Hz）
+        oscillator.frequency.setValueAtTime(1350, audioCtx.currentTime); 
+
+        gainNode.gain.setValueAtTime(0.12, audioCtx.currentTime); // 快適な音量
+        // スーッと消えていく美しい余韻（0.35秒）
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35); 
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.35);
+      } catch (e) {
+        // 音声再生がブロックされた場合の対策
+      }
+    }
+
     function updateDisplay() {
       elMemberCount.innerText = memberCount;
       elVisitorCount.innerText = visitorCount;
@@ -238,11 +263,13 @@
     document.getElementById('add-member').addEventListener('touchstart', (e) => {
       e.preventDefault();
       memberCount++;
+      playChinSound(); // チン♪と鳴らす
       updateDisplay();
     });
     document.getElementById('add-member').addEventListener('click', (e) => {
       if (e.detail !== 0) return;
       memberCount++;
+      playChinSound(); // チン♪と鳴らす
       updateDisplay();
     });
 
@@ -258,11 +285,13 @@
     document.getElementById('add-visitor').addEventListener('touchstart', (e) => {
       e.preventDefault();
       visitorCount++;
+      playChinSound(); // チン♪と鳴らす
       updateDisplay();
     });
     document.getElementById('add-visitor').addEventListener('click', (e) => {
       if (e.detail !== 0) return;
       visitorCount++;
+      playChinSound(); // チン♪と鳴らす
       updateDisplay();
     });
 
