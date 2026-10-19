@@ -229,26 +229,34 @@
     const elVisitorCount = document.getElementById('count-visitor');
     const elResetBtn = document.getElementById('btn-reset');
 
-    // タイの小型シンバル「チン（ฉิ่ง）」風の澄んだ高音を鳴らす関数
-    function playChinSound() {
+    // キラキラした「シャラーン☆彡」という音を鳴らす関数
+    function playSparkleSound() {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
+        
+        // 階段状に駆け上がる音の周波数（Hz）のリスト
+        const notes = [1046.50, 1318.51, 1567.98, 2093.00, 2637.02, 3135.96]; // C6, E6, G6, C7, E6, G7相当
+        
+        notes.forEach((freq, index) => {
+          const oscillator = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
 
-        oscillator.type = 'sine'; // 澄んだ美しい正弦波
-        // チンのような高く響く周波数（約 1350Hz）
-        oscillator.frequency.setValueAtTime(1350, audioCtx.currentTime); 
+          oscillator.type = 'sine';
+          oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime + index * 0.04);
 
-        gainNode.gain.setValueAtTime(0.12, audioCtx.currentTime); // 快適な音量
-        // スーッと消えていく美しい余韻（0.35秒）
-        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35); 
+          // わずかに時間をずらして連続して鳴らす（パラパラ感）
+          const startTime = audioCtx.currentTime + index * 0.04;
+          const duration = 0.25;
 
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
+          gainNode.gain.setValueAtTime(0.08, startTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
 
-        oscillator.start();
-        oscillator.stop(audioCtx.currentTime + 0.35);
+          oscillator.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+
+          oscillator.start(startTime);
+          oscillator.stop(startTime + duration);
+        });
       } catch (e) {
         // 音声再生がブロックされた場合の対策
       }
@@ -263,13 +271,13 @@
     document.getElementById('add-member').addEventListener('touchstart', (e) => {
       e.preventDefault();
       memberCount++;
-      playChinSound(); // チン♪と鳴らす
+      playSparkleSound(); // キラキラ音を鳴らす
       updateDisplay();
     });
     document.getElementById('add-member').addEventListener('click', (e) => {
       if (e.detail !== 0) return;
       memberCount++;
-      playChinSound(); // チン♪と鳴らす
+      playSparkleSound(); // キラキラ音を鳴らす
       updateDisplay();
     });
 
@@ -285,13 +293,13 @@
     document.getElementById('add-visitor').addEventListener('touchstart', (e) => {
       e.preventDefault();
       visitorCount++;
-      playChinSound(); // チン♪と鳴らす
+      playSparkleSound(); // キラキラ音を鳴らす
       updateDisplay();
     });
     document.getElementById('add-visitor').addEventListener('click', (e) => {
       if (e.detail !== 0) return;
       visitorCount++;
-      playChinSound(); // チン♪と鳴らす
+      playSparkleSound(); // キラキラ音を鳴らす
       updateDisplay();
     });
 
