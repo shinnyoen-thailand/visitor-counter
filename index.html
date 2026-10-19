@@ -229,51 +229,18 @@
     const elVisitorCount = document.getElementById('count-visitor');
     const elResetBtn = document.getElementById('btn-reset');
 
-    // オーディオの共通管理（初回タッチで有効化）
-    let audioCtx = null;
-    function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-    }
+    // アップロードした音声ファイルを読み込む
+    // ※ファイル名にスペースが含まれている場合は encodeURIComponent を通すか、ファイル名にスペースを無くすことをお勧めします
+    const clickSound = new Audio('決定ボタンを押す53.mp3');
+    clickSound.preload = 'auto';
 
-    // キラキラした「シャラーン☆彡」という音を鳴らす関数
-    function playSparkleSound() {
-      try {
-        initAudio();
-        if (!audioCtx) return;
-
-        // シャララリーンと駆け上がる高音の周波数リスト（より華やかな音程）
-        const notes = [1318.51, 1567.98, 2093.00, 2637.02, 3135.96, 4186.01]; // E6, G6, C7, E7, G7, C8
-        
-        notes.forEach((freq, index) => {
-          const oscillator = audioCtx.createOscillator();
-          const gainNode = audioCtx.createGain();
-
-          oscillator.type = 'sine';
-          
-          const startTime = audioCtx.currentTime + (index * 0.05); // 少しずつずらす
-          const duration = 0.35;
-
-          oscillator.frequency.setValueAtTime(freq, startTime);
-
-          // 音量を滑らかに立ち上げて、美しく消していく
-          gainNode.gain.setValueAtTime(0.001, startTime);
-          gainNode.gain.linearRampToValueAtTime(0.08, startTime + 0.02);
-          gainNode.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
-
-          oscillator.connect(gainNode);
-          gainNode.connect(audioCtx.destination);
-
-          oscillator.start(startTime);
-          oscillator.stop(startTime + duration);
-        });
-      } catch (e) {
-        console.log(e);
-      }
+    // 音を鳴らす関数
+    function playSound() {
+      // 連続で押されたときにもすぐ頭から鳴るように再生位置をリセット
+      clickSound.currentTime = 0;
+      clickSound.play().catch(e => {
+        // ブラウザの自動再生制限などでブロックされた場合の対策
+      });
     }
 
     function updateDisplay() {
@@ -285,13 +252,14 @@
     document.getElementById('add-member').addEventListener('touchstart', (e) => {
       e.preventDefault();
       memberCount++;
-      playSparkleSound();
+      playSound();
+      updateDialogIfNeeded(); // (内部更新用)
       updateDisplay();
     });
     document.getElementById('add-member').addEventListener('click', (e) => {
       if (e.detail !== 0) return;
       memberCount++;
-      playSparkleSound();
+      playSound();
       updateDisplay();
     });
 
@@ -307,13 +275,13 @@
     document.getElementById('add-visitor').addEventListener('touchstart', (e) => {
       e.preventDefault();
       visitorCount++;
-      playSparkleSound();
+      playSound();
       updateDisplay();
     });
     document.getElementById('add-visitor').addEventListener('click', (e) => {
       if (e.detail !== 0) return;
       visitorCount++;
-      playSparkleSound();
+      playSound();
       updateDisplay();
     });
 
