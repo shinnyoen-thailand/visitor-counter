@@ -1,23 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Visitor Counter</title>
-
-  <!-- アプリアイコンの設定 -->
-  <link rel="apple-touch-icon" href="象さん.jpg">
-  <link rel="icon" type="image/jpeg" href="象さん.jpg">
-  
-  <!-- アプリ風にフルスクリーン表示させる設定 -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Visitor Counter">
-
+  <title>来場者カウンター</title>
   <style>
+    /* iOS特有のタップハイライトや不要なジェスチャーを全カット */
     * {
       -webkit-tap-highlight-color: transparent;
       box-sizing: border-box;
+      -webkit-user-select: none;
+      user-select: none;
     }
     
     body {
@@ -31,15 +24,13 @@
       align-items: center;
       background-color: #ffffff;
       
-      /* Background Image Settings */
       background-image: url('象さん.jpg');
       background-size: contain;
       background-position: center;
       background-repeat: no-repeat;
       
-      user-select: none;
-      -webkit-user-select: none;
       overflow: hidden;
+      touch-action: manipulation;
     }
 
     /* Main Container */
@@ -62,7 +53,7 @@
       margin-bottom: 10px;
     }
 
-    /* Counter Outer Container (Completely Transparent) */
+    /* Counter Outer Container */
     .counter-card {
       width: 38%;
       height: 92%;
@@ -83,9 +74,10 @@
       align-items: center;
       justify-content: center;
       width: 100%;
+      pointer-events: none;
     }
 
-    /* Count Number (Rounded Capsule Blur Badge) */
+    /* Count Number */
     .count {
       font-size: clamp(8rem, 20vh, 16rem);
       font-weight: 800;
@@ -100,9 +92,10 @@
       backdrop-filter: blur(8px);
       min-width: 220px;
       text-align: center;
+      pointer-events: auto;
     }
 
-    /* Button Area (Targeted Blur around Member/Visitor buttons) */
+    /* Button Area */
     .btn-area {
       width: 100%;
       display: flex;
@@ -129,10 +122,11 @@
       cursor: pointer;
       transition: transform 0.05s, opacity 0.1s;
       box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+      touch-action: manipulation;
     }
     
     .btn-add:active {
-      transform: scale(0.97);
+      transform: scale(0.96);
       opacity: 0.9;
     }
 
@@ -154,6 +148,7 @@
       font-size: 1.3rem;
       font-weight: bold;
       cursor: pointer;
+      touch-action: manipulation;
     }
     .btn-sub:active {
       background-color: rgba(209, 213, 219, 0.95);
@@ -197,8 +192,8 @@
           <div class="count" id="count-member">0</div>
         </div>
         <div class="btn-area">
-          <button class="btn-add btn-member" id="add-member">Member</button>
-          <button class="btn-sub" id="sub-member">－</button>
+          <button class="btn-add btn-member" id="add-member" ontouchstart="handleCount('member', event)">Member</button>
+          <button class="btn-sub" id="sub-member" onclick="handleSub('member')">－</button>
         </div>
       </div>
       
@@ -208,8 +203,8 @@
           <div class="count" id="count-visitor">0</div>
         </div>
         <div class="btn-area">
-          <button class="btn-add btn-visitor" id="add-visitor">Visitor</button>
-          <button class="btn-sub" id="sub-visitor">－</button>
+          <button class="btn-add btn-visitor" id="add-visitor" ontouchstart="handleCount('visitor', event)">Visitor</button>
+          <button class="btn-sub" id="sub-visitor" onclick="handleSub('visitor')">－</button>
         </div>
       </div>
       
@@ -229,18 +224,20 @@
     const elVisitorCount = document.getElementById('count-visitor');
     const elResetBtn = document.getElementById('btn-reset');
 
-    // アップロードした音声ファイルを読み込む
-    // ※ファイル名にスペースが含まれている場合は encodeURIComponent を通すか、ファイル名にスペースを無くすことをお勧めします
-    const clickSound = new Audio('ウグイスのさえずり1.mp3');
-    clickSound.preload = 'auto';
+    // 🎵 音声ファイルの読み込み（「決定ボタンを押す53.mp3」を使用）
+    const clickSound = new Audio('決定ボタンを押す53.mp3');
 
-    // 音を鳴らす関数
-    function playSound() {
-      // 連続で押されたときにもすぐ頭から鳴るように再生位置をリセット
-      clickSound.currentTime = 0;
-      clickSound.play().catch(e => {
-        // ブラウザの自動再生制限などでブロックされた場合の対策
-      });
+    // 連打時に音が切れずに高速再生されるよう最適化
+    function playMp3Sound() {
+      try {
+        clickSound.currentTime = 0; // 毎回再生位置を0秒に戻す
+        const playPromise = clickSound.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(error => console.log('Audio play error:', error));
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     function updateDisplay() {
@@ -248,57 +245,52 @@
       elVisitorCount.innerText = visitorCount;
     }
 
-    // Member Add
-    document.getElementById('add-member').addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      memberCount++;
-      playSound();
-      updateDialogIfNeeded(); // (内部更新用)
-      updateDisplay();
-    });
-    document.getElementById('add-member').addEventListener('click', (e) => {
-      if (e.detail !== 0) return;
-      memberCount++;
-      playSound();
-      updateDisplay();
-    });
-
-    // Member Subtract
-    document.getElementById('sub-member').addEventListener('click', () => {
-      if (memberCount > 0) {
-        memberCount--;
-        updateDisplay();
+    // 🚀 最速カウントアップ処理（`ontouchstart` 対応でサクサク動作）
+    function handleCount(type, event) {
+      if (event) {
+        event.preventDefault(); // iOSのダブルタップズームや長押しメニューの遅延を完全にブロック
       }
-    });
 
-    // Visitor Add
-    document.getElementById('add-visitor').addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      visitorCount++;
-      playSound();
+      playMp3Sound(); // 音を鳴らす
+
+      if (type === 'member') {
+        memberCount++;
+      } else if (type === 'visitor') {
+        visitorCount++;
+      }
       updateDisplay();
+    }
+
+    // PC等でクリックされた場合のフォールバック（タッチ対応端末でない場合）
+    document.getElementById('add-member').addEventListener('click', (e) => {
+      if (e.detail !== 0) { // タッチで既に動いている場合は2重実行しない
+        handleCount('member', null);
+      }
     });
     document.getElementById('add-visitor').addEventListener('click', (e) => {
-      if (e.detail !== 0) return;
-      visitorCount++;
-      playSound();
-      updateDisplay();
-    });
-
-    // Visitor Subtract
-    document.getElementById('sub-visitor').addEventListener('click', () => {
-      if (visitorCount > 0) {
-        visitorCount--;
-        updateDisplay();
+      if (e.detail !== 0) {
+        handleCount('visitor', null);
       }
     });
 
-    // Long Press Reset Logic
+    // ➖ マイナスボタン処理
+    function handleSub(type) {
+      if (type === 'member' && memberCount > 0) {
+        memberCount--;
+      } else if (type === 'visitor' && visitorCount > 0) {
+        visitorCount--;
+      }
+      updateDisplay();
+    }
+
+    // 🛑 リセット長押し処理（1.5秒）
     let resetTimer = null;
     const holdTime = 1500;
 
     function startReset(e) {
-      if (e.type === 'touchstart') e.preventDefault();
+      if (e.type === 'touchstart') {
+        if (e.cancelable) e.preventDefault();
+      }
       elResetBtn.innerText = 'Hold...';
       elResetBtn.style.backgroundColor = 'rgba(252, 165, 165, 1)';
       
